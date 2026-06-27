@@ -2,15 +2,21 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Special Album Gift</title>
+    <title>Special Birthday Gift</title>
     <style>
-        /* Paksa Landscape untuk HP */
-        @media screen and (orientation: portrait) {
-            body { transform: rotate(90deg); transform-origin: top left; width: 100vh; height: 100vw; overflow-x: hidden; }
+        body { 
+            margin: 0; 
+            background: black; 
+            color: white; 
+            font-family: 'Courier New', monospace; 
+            text-align: center; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
         }
-        
-        body { margin: 0; background: black; color: white; font-family: 'Courier New', monospace; text-align: center; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        #matrix { position: fixed; top: 0; left: 0; z-index: 0; }
+        #matrix { position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; }
         #countdown { position: absolute; font-size: 8em; color: white; z-index: 2; text-shadow: 0 0 20px white; }
         
         #content { display: none; z-index: 1; position: relative; }
@@ -40,6 +46,7 @@
             align-items: center;
             cursor: pointer;
             box-shadow: 10px 10px 30px rgba(255,255,255,0.2);
+            backface-visibility: hidden;
         }
         
         .album-book.open .cover {
@@ -95,15 +102,13 @@
     <div id="countdown">3</div>
     
     <div id="content">
-        <div class="album-book" onclick="this.classList.toggle('open')">
+        <div class="album-book" onclick="this.classList.toggle('open'); playMusic();">
             <div class="cover">
                 <h2>📖 Buka Album</h2>
                 <p style="font-size: 0.9em; margin-top: 10px;">(Sentuh untuk kado & musik)</p>
             </div>
             <div class="inside">
-                <!-- Tulisan Klien -->
-                <div class="cool-text">HAPPY ANNIVERSARY 🤍</div>
-                <!-- 4 Foto Klien -->
+                <div class="cool-text">HAPPY BIRTHDAY ✨🤍</div>
                 <div class="grid-4">
                     <img src="https://i.ibb.co/6Jtj3nnC/IMG-3995.jpg">
                     <img src="https://i.ibb.co/5gjPc19g/IMG-3994.jpg">
@@ -120,11 +125,21 @@
         let count = 3;
         let timer = setInterval(() => {
             count--;
-            if (count > 0) document.getElementById('countdown').innerText = count;
-            else { clearInterval(timer); document.getElementById('countdown').style.display = 'none'; document.getElementById('content').style.display = 'block'; }
+            if (count > 0) {
+                document.getElementById('countdown').innerText = count;
+            } else { 
+                clearInterval(timer); 
+                document.getElementById('countdown').style.display = 'none'; 
+                document.getElementById('content').style.display = 'block'; 
+            }
         }, 1000);
 
-        window.onclick = () => { document.getElementById('music').play(); };
+        function playMusic() {
+            let audio = document.getElementById('music');
+            if (audio.paused) {
+                audio.play().catch(e => console.log("Menunggu interaksi user"));
+            }
+        }
 
         const c = document.getElementById('matrix'), ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
@@ -135,6 +150,8 @@
             drops.forEach((y, i) => { ctx.fillText("♥", i*20, y*20); if(y*20 > c.height) drops[i]=0; else drops[i]++; }); 
         }
         setInterval(draw, 50);
+
+        window.onresize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
     </script>
 </body>
 </html>
