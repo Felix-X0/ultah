@@ -2,56 +2,139 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Gift for You</title>
+    <title>Special Album Gift</title>
     <style>
-        body { margin: 0; background: black; color: #0F0; font-family: 'Courier New', monospace; overflow: hidden; text-align: center; }
-        #matrix { position: fixed; top: 0; left: 0; }
-        #content { position: relative; z-index: 1; margin-top: 15vh; display: none; }
-        .slant { font-style: italic; transform: rotate(-5deg); font-size: 2.5em; color: white; text-shadow: 2px 2px 10px red; }
-        .foto { width: 250px; border: 5px solid white; border-radius: 20px; margin: 15px; box-shadow: 0 0 20px white; }
-        button { padding: 15px 30px; font-size: 1.2em; background: #d32f2f; color: white; border: none; border-radius: 25px; cursor: pointer; margin-top: 20px; }
+        /* Paksa Landscape untuk HP */
+        @media screen and (orientation: portrait) {
+            body { transform: rotate(90deg); transform-origin: top left; width: 100vh; height: 100vw; overflow-x: hidden; }
+        }
+        
+        body { margin: 0; background: black; color: white; font-family: 'Courier New', monospace; text-align: center; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        #matrix { position: fixed; top: 0; left: 0; z-index: 0; }
+        #countdown { position: absolute; font-size: 8em; color: white; z-index: 2; text-shadow: 0 0 20px white; }
+        
+        #content { display: none; z-index: 1; position: relative; }
+
+        /* Desain Album Buku */
+        .album-book {
+            width: 320px;
+            height: 460px;
+            position: relative;
+            perspective: 1500px;
+        }
+        
+        /* Sampul Depan */
+        .cover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #222, #000);
+            border: 3px solid white;
+            border-radius: 5px 20px 20px 5px;
+            transform-origin: left;
+            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 10px 10px 30px rgba(255,255,255,0.2);
+        }
+        
+        .album-book.open .cover {
+            transform: rotateY(-140deg);
+            box-shadow: none;
+        }
+        
+        .cover h2 { color: white; text-shadow: 0 0 15px white; font-size: 1.5em; padding: 0 20px; }
+
+        /* Bagian Dalam Album */
+        .inside {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            border: 3px solid white;
+            border-radius: 5px 20px 20px 5px;
+            padding: 15px;
+            box-sizing: border-box;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: inset 0 0 30px black;
+        }
+        
+        /* Tulisan Putih Menyala */
+        .cool-text {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6);
+            animation: pulse 2s infinite;
+            margin-bottom: 15px;
+            margin-top: 10px;
+        }
+        @keyframes pulse { 
+            0% { opacity: 0.8; } 
+            50% { opacity: 1; text-shadow: 0 0 25px white, 0 0 35px white; } 
+            100% { opacity: 0.8; } 
+        }
+
+        /* Grid 4 Foto */
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .grid-4 img {
+            width: 100%; height: 130px; object-fit: cover; border: 2px solid white;
+            border-radius: 8px; box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
     </style>
 </head>
 <body>
-
     <canvas id="matrix"></canvas>
+    <div id="countdown">3</div>
     
     <div id="content">
-        <h1 class="slant">Selamat Ulang Tahun Sayang!</h1>
-        
-        <div id="gallery">
-            <img src="https://ibb.co.com/wrLVnBXr
-https://ibb.co.com/1JRCPDnx
-https://ibb.co.com/vNQfKNS" class="foto">
+        <div class="album-book" onclick="this.classList.toggle('open')">
+            <div class="cover">
+                <h2>📖 Buka Album</h2>
+                <p style="font-size: 0.9em; margin-top: 10px;">(Sentuh untuk kado & musik)</p>
+            </div>
+            <div class="inside">
+                <!-- Tulisan Klien -->
+                <div class="cool-text">HAPPY ANNIVERSARY 🤍</div>
+                <!-- 4 Foto Klien -->
+                <div class="grid-4">
+                    <img src="LINK_FOTO_1">
+                    <img src="LINK_FOTO_2">
+                    <img src="LINK_FOTO_3">
+                    <img src="LINK_FOTO_4">
+                </div>
+            </div>
         </div>
-        
-        <p style="color: white;">Klik tombol di bawah untuk kejutan musik.</p>
-        <button onclick="playMusic()">Buka Musik 🎵</button>
-        <audio id="music" loop>
-            <source src="PASTE_LINK_LAGU_MP3" type="audio/mpeg">
-        </audio>
     </div>
 
+    <audio id="music" loop src="LINK_LAGU_MP3"></audio>
+
     <script>
-        // Efek Matrix
+        let count = 3;
+        let timer = setInterval(() => {
+            count--;
+            if (count > 0) document.getElementById('countdown').innerText = count;
+            else { clearInterval(timer); document.getElementById('countdown').style.display = 'none'; document.getElementById('content').style.display = 'block'; }
+        }, 1000);
+
+        window.onclick = () => { document.getElementById('music').play(); };
+
         const c = document.getElementById('matrix'), ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
         const drops = Array(Math.floor(c.width/20)).fill(1);
-        function draw() {
-            ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0, c.width, c.height);
-            ctx.fillStyle = '#0F0';
-            drops.forEach((y, i) => { ctx.fillText("♥", i*20, y*20); if(y*20 > c.height) drops[i]=0; else drops[i]++; });
+        function draw() { 
+            ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0, c.width, c.height); 
+            ctx.fillStyle = '#888'; 
+            drops.forEach((y, i) => { ctx.fillText("♥", i*20, y*20); if(y*20 > c.height) drops[i]=0; else drops[i]++; }); 
         }
         setInterval(draw, 50);
-
-        // Muncul setelah 4 detik
-        setTimeout(() => {
-            document.getElementById('matrix').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
-        }, 4000);
-
-        // Fungsi Musik
-        function playMusic() { document.getElementById('music').play(); }
     </script>
 </body>
 </html>
