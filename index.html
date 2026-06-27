@@ -5,86 +5,74 @@
     <title>Special Birthday Gift</title>
     <style>
         body { 
-            margin: 0; background: black; color: white; font-family: 'Courier New', monospace; 
+            margin: 0; background: black; color: white; font-family: 'Georgia', serif; 
             text-align: center; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; 
         }
         #matrix { position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; }
-        #countdown { position: absolute; font-size: 8em; color: white; z-index: 2; text-shadow: 0 0 20px white; }
         
-        #content { display: none; z-index: 1; position: relative; }
+        #countdown { position: absolute; font-size: 8em; color: white; z-index: 2; text-shadow: 0 0 30px white; }
+        
+        #content { 
+            display: none; flex-direction: column; justify-content: center; align-items: center; 
+            width: 100%; height: 100%; position: relative; z-index: 1; 
+        }
 
-        /* Desain Album Buku */
-        .album-book { width: 320px; height: 460px; position: relative; perspective: 1500px; }
+        /* TULISAN CINEMATIC */
+        .big-running-text {
+            font-size: 3.5em;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 10px white, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            position: absolute;
+            top: 10%;
+            width: 100%;
+            z-index: 5;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* ALBUM BUKU */
+        .album-book { 
+            width: 320px; height: 420px; position: relative; perspective: 1500px; 
+            margin-top: 120px; z-index: 10; cursor: pointer;
+        }
         
-        /* Sampul Depan */
         .cover {
             position: absolute; width: 100%; height: 100%; background: linear-gradient(145deg, #222, #000);
             border: 3px solid white; border-radius: 5px 20px 20px 5px; transform-origin: left;
-            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1); z-index: 10;
+            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 1.5s; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; box-shadow: 10px 10px 30px rgba(255,255,255,0.2); backface-visibility: hidden;
+            box-shadow: 10px 10px 30px rgba(255,255,255,0.3); backface-visibility: hidden;
         }
+        .cover.open { transform: rotateY(-140deg); opacity: 0; pointer-events: none; }
         
-        .album-book.open .cover { transform: rotateY(-140deg); box-shadow: none; }
-        .cover h2 { color: white; text-shadow: 0 0 15px white; font-size: 1.5em; padding: 0 20px; }
-
-        /* Bagian Dalam Album */
         .inside {
             position: absolute; width: 100%; height: 100%; background: #111; border: 3px solid white;
-            border-radius: 5px 20px 20px 5px; padding: 15px; box-sizing: border-box; z-index: 1;
-            display: flex; flex-direction: column; justify-content: flex-start; box-shadow: inset 0 0 30px black;
+            border-radius: 5px 20px 20px 5px; padding: 15px; box-sizing: border-box;
+            display: flex; justify-content: center; align-items: center;
         }
+        .inside img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; animation: fadeIn 0.8s forwards; }
         
-        /* TULISAN BERJALAN (MARQUEE) */
-        .running-text {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: pink;
-            text-shadow: 0 0 10px rgba(255,192,203,0.8);
-            margin-bottom: 15px;
-            margin-top: 10px;
-        }
-
-        /* Grid Foto & Efek Muncul Satu-Satu */
-        .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-        .grid-4 img {
-            width: 100%; height: 130px; object-fit: cover; border: 2px solid white;
-            border-radius: 8px; box-shadow: 0 0 10px rgba(255,255,255,0.3);
-            opacity: 0; /* Awalnya tidak terlihat */
-        }
-        
-        /* Delay agar foto muncul bergantian setelah album terbuka */
-        .album-book.open .grid-4 img { animation: fadeIn 1s forwards; }
-        .album-book.open .grid-4 img:nth-child(1) { animation-delay: 0.5s; }
-        .album-book.open .grid-4 img:nth-child(2) { animation-delay: 1.5s; }
-        .album-book.open .grid-4 img:nth-child(3) { animation-delay: 2.5s; }
-        .album-book.open .grid-4 img:nth-child(4) { animation-delay: 3.5s; }
-        
-        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
-    
-    <div id="countdown">3</div>
+    <div id="countdown">5</div>
     
     <div id="content">
+        <marquee direction="left" scrollamount="8" class="big-running-text">
+            HAPPY BIRTHDAY SAYANG ✨ I LOVE YOU SO MUCH! SEMOGA PANJANG UMUR DAN BAHAGIA SELALU 🤍🎂
+        </marquee>
+        
         <div class="album-book" id="albumBtn">
-            <div class="cover">
+            <div class="cover" id="albumCover">
                 <h2>📖 Buka Album</h2>
-                <p style="font-size: 0.9em; margin-top: 10px;">(Sentuh untuk kado & musik)</p>
+                <p style="font-size: 1em; margin-top: 10px;">(Tap / Sentuh layarnya)</p>
             </div>
-            <div class="inside">
-                <marquee direction="left" scrollamount="5" class="running-text">
-                    I LOVE YOU SAYANG HAPPY BIRTHDAY ✨🤍
-                </marquee>
-                
-                <div class="grid-4">
-                    <img src="foto1.jpg">
-                    <img src="foto2.jpg">
-                    <img src="foto3.jpg">
-                    <img src="foto4.jpg">
-                </div>
+            <div class="inside" id="insideAlbum">
+                <img id="albumPhoto" src="" style="display: none;">
             </div>
         </div>
     </div>
@@ -92,27 +80,41 @@
     <audio id="music" loop src="musik.mp3"></audio>
 
     <script>
-        // Logika Countdown
-        let count = 3;
+        let count = 5;
         let timer = setInterval(() => {
             count--;
-            if (count > 0) {
-                document.getElementById('countdown').innerText = count;
-            } else { 
+            if (count > 0) document.getElementById('countdown').innerText = count;
+            else { 
                 clearInterval(timer); 
                 document.getElementById('countdown').style.display = 'none'; 
-                document.getElementById('content').style.display = 'block'; 
+                document.getElementById('content').style.display = 'flex'; 
             }
-        }, 1000);
+        }, 1200); 
 
-        // Buka album & putar musik
+        let photos = ["foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg"];
+        let currentPhotoIndex = 0;
+        let isCoverOpen = false;
+
         document.getElementById('albumBtn').addEventListener('click', function() {
-            this.classList.toggle('open');
             let audio = document.getElementById('music');
-            audio.play();
+            if (audio.paused) audio.play();
+
+            if (!isCoverOpen) {
+                document.getElementById('albumCover').classList.add('open');
+                document.getElementById('albumPhoto').style.display = 'block';
+                document.getElementById('albumPhoto').src = photos[currentPhotoIndex];
+                isCoverOpen = true;
+            } else {
+                currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+                let imgEl = document.getElementById('albumPhoto');
+                imgEl.style.animation = 'none';
+                setTimeout(() => {
+                    imgEl.src = photos[currentPhotoIndex];
+                    imgEl.style.animation = 'fadeIn 0.8s forwards';
+                }, 50);
+            }
         });
 
-        // Efek Hujan Hati (Heart Matrix)
         const c = document.getElementById('matrix'), ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
         const drops = Array(Math.floor(c.width/20)).fill(1);
@@ -122,8 +124,6 @@
             drops.forEach((y, i) => { ctx.fillText("♥", i*20, y*20); if(y*20 > c.height) drops[i]=0; else drops[i]++; }); 
         }
         setInterval(draw, 50);
-
-        window.onresize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
     </script>
 </body>
 </html>
