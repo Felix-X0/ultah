@@ -2,24 +2,36 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Surprise!</title>
+    <title>Gift for You</title>
     <style>
-        body { margin: 0; background: black; color: #0F0; font-family: monospace; overflow: hidden; text-align: center; }
+        body { margin: 0; background: black; color: #0F0; font-family: 'Courier New', monospace; overflow: hidden; text-align: center; }
         #matrix { position: fixed; top: 0; left: 0; }
-        #content { position: relative; z-index: 1; margin-top: 20vh; display: none; }
-        .slant { font-style: italic; transform: rotate(-8deg); font-size: 2.5em; color: white; text-shadow: 2px 2px 10px red; }
-        .foto { width: 280px; border: 5px solid white; border-radius: 20px; margin: 20px; }
+        #content { position: relative; z-index: 1; margin-top: 15vh; display: none; }
+        .slant { font-style: italic; transform: rotate(-5deg); font-size: 2.5em; color: white; text-shadow: 2px 2px 10px red; }
+        .foto { width: 250px; border: 5px solid white; border-radius: 20px; margin: 15px; box-shadow: 0 0 20px white; }
+        button { padding: 15px 30px; font-size: 1.2em; background: #d32f2f; color: white; border: none; border-radius: 25px; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
+
     <canvas id="matrix"></canvas>
+    
     <div id="content">
-        <h1 class="slant">Happy Anniversary Sayang!</h1>
-        <img src="PASTE_LINK_FOTO_DI_SINI" class="foto">
-        <p style="color:white; font-size: 1.2em;">Terima kasih untuk segalanya.</p>
+        <h1 class="slant">Selamat Ulang Tahun Sayang!</h1>
+        
+        <div id="gallery">
+            <img src="PASTE_LINK_FOTO_1" class="foto">
         </div>
+        
+        <p style="color: white;">Klik tombol di bawah untuk kejutan musik.</p>
+        <button onclick="playMusic()">Buka Musik 🎵</button>
+        <audio id="music" loop>
+            <source src="PASTE_LINK_LAGU_MP3" type="audio/mpeg">
+        </audio>
+    </div>
 
     <script>
+        // Efek Matrix
         const c = document.getElementById('matrix'), ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
         const drops = Array(Math.floor(c.width/20)).fill(1);
@@ -29,7 +41,15 @@
             drops.forEach((y, i) => { ctx.fillText("♥", i*20, y*20); if(y*20 > c.height) drops[i]=0; else drops[i]++; });
         }
         setInterval(draw, 50);
-        setTimeout(() => { document.getElementById('content').style.display = 'block'; }, 4000);
+
+        // Muncul setelah 4 detik
+        setTimeout(() => {
+            document.getElementById('matrix').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }, 4000);
+
+        // Fungsi Musik
+        function playMusic() { document.getElementById('music').play(); }
     </script>
 </body>
 </html>
