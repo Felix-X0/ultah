@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Surprise!</title>
+    <style>
+        body { margin: 0; background: black; color: #0F0; font-family: monospace; overflow: hidden; text-align: center; }
+        canvas { display: block; }
+        #content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
+        .slant-text { font-style: italic; transform: rotate(-10deg); font-size: 3em; color: white; text-shadow: 2px 2px 10px red; }
+        .foto { width: 250px; border: 5px solid white; border-radius: 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+    
+    <div id="content">
+        <h1 class="slant-text">Selamat Anniversary!</h1>
+        <img src="LINK_FOTO_KAMU_DISINI" class="foto">
+        <p style="color: white;">Terima kasih untuk segalanya.</p>
+    </div>
+
+    <script>
+        // Efek Matrix Rain
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const drops = Array(Math.floor(canvas.width/20)).fill(1);
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            drops.forEach((y, i) => {
+                ctx.fillText("ILY", i * 20, y * 20);
+                if (y * 20 > canvas.height) drops[i] = 0;
+                else drops[i]++;
+            });
+        }
+        setInterval(draw, 50);
+
+        // Munculkan konten setelah 5 detik
+        setTimeout(() => {
+            document.getElementById('matrix').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }, 5000);
+    </script>
+</body>
+</html>
