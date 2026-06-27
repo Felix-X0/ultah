@@ -8,45 +8,28 @@
         body { 
             margin: 0; background: black; color: white; font-family: 'Georgia', serif; 
             text-align: center; overflow: hidden; height: 100vh; display: flex; 
-            flex-direction: column; align-items: center; justify-content: center;
+            flex-direction: column; align-items: center; justify-content: center; 
         }
         #matrix { position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; }
         
-        #countdown { 
-            position: absolute; font-size: 10em; font-weight: bold; color: white; 
-            z-index: 2; text-shadow: 0 0 30px white; 
-        }
+        #countdown { position: absolute; font-size: 8em; z-index: 2; text-shadow: 0 0 20px white; }
         
-        #content { 
-            display: none; z-index: 1; width: 95%; max-width: 600px; 
-            animation: fadeIn 1s ease-in;
-        }
+        #content { display: none; z-index: 1; width: 90%; max-width: 400px; position: relative; }
+        .big-running-text { font-size: 2em; font-weight: 900; color: white; text-shadow: 0 0 10px white, 0 0 20px #ff00ff; margin-bottom: 20px; }
 
-        .big-running-text {
-            font-size: 2.2em; font-weight: 900; color: white; 
-            text-shadow: 0 0 10px white, 0 0 20px #ff00ff;
-            text-transform: uppercase; margin-bottom: 25px;
-        }
-
-        .grid-container { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
-        }
+        /* Album Gaya Buku */
+        .album-container { perspective: 1000px; width: 300px; height: 420px; margin: auto; cursor: pointer; }
+        .book { width: 100%; height: 100%; position: relative; transition: transform 1s; transform-style: preserve-3d; }
+        .book.open { transform: rotateY(-180deg); }
         
-        .foto-box { 
-            width: 100%; height: 220px; border: 3px solid white; 
-            border-radius: 15px; overflow: hidden; 
-        }
+        .page { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border: 3px solid white; border-radius: 10px; display: flex; justify-content: center; align-items: center; background: #222; }
+        .front { z-index: 2; }
+        .back { transform: rotateY(180deg); z-index: 1; padding: 10px; box-sizing: border-box; }
         
-        .foto-box img { 
-            width: 100%; height: 100%; object-fit: cover; 
-            animation: popUp 0.8s ease-out forwards; 
-        }
-
-        @keyframes popUp { 
-            from { transform: scale(0.5); opacity: 0; } 
-            to { transform: scale(1); opacity: 1; } 
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Foto tunggal */
+        #mainPhoto { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; animation: popUp 0.6s ease-out; }
+        
+        @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -54,36 +37,50 @@
     <div id="countdown">5</div>
     
     <div id="content">
-        <marquee class="big-running-text">
-            HAPPY BIRTHDAY SAYANG ✨ I LOVE YOU! SEMOGA PANJANG UMUR DAN BAHAGIA SELALU 🤍🎂
-        </marquee>
+        <marquee class="big-running-text">HAPPY BIRTHDAY SAYANG ✨ I LOVE YOU! SEMOGA PANJANG UMUR & BAHAGIA SELALU 🤍</marquee>
         
-        <div class="grid-container">
-            <div class="foto-box"><img src="foto1.jpg"></div>
-            <div class="foto-box"><img src="foto2.jpg"></div>
-            <div class="foto-box"><img src="foto3.jpg"></div>
-            <div class="foto-box"><img src="foto4.jpg"></div>
+        <div class="album-container" onclick="toggleBook()">
+            <div class="book" id="book">
+                <div class="page front"><h2>📖 Buka Album</h2></div>
+                <div class="page back" onclick="nextPhoto(event)">
+                    <img id="mainPhoto" src="foto1.jpg">
+                </div>
+            </div>
         </div>
-        <p style="margin-top:20px; font-size: 1.1em; color: #ccc;">(Tap layar untuk musik)</p>
+        <p style="margin-top: 15px; font-size: 0.9em; color: #ccc;">(Tap buku untuk buka/tutup, Tap foto untuk ganti slide)</p>
     </div>
 
     <audio id="music" loop src="musik.mp3"></audio>
 
     <script>
-        // Hitung Mundur
+        // Hitung Mundur 5
         let count = 5;
         let timer = setInterval(() => {
             count--;
             if (count > 0) document.getElementById('countdown').innerText = count;
-            else { 
-                clearInterval(timer); 
-                document.getElementById('countdown').style.display = 'none'; 
-                document.getElementById('content').style.display = 'block'; 
-            }
+            else { clearInterval(timer); document.getElementById('countdown').style.display = 'none'; document.getElementById('content').style.display = 'block'; }
         }, 1200);
 
-        // Musik Play
-        window.onclick = () => { document.getElementById('music').play(); };
+        let audio = document.getElementById('music');
+        function toggleBook() {
+            document.getElementById('book').classList.toggle('open');
+            audio.play();
+        }
+
+        // Slide Foto Satu Persatu
+        let photos = ["foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg"];
+        let index = 0;
+        function nextPhoto(e) {
+            e.stopPropagation(); 
+            index = (index + 1) % photos.length;
+            let img = document.getElementById('mainPhoto');
+            img.style.animation = 'none';
+            // Trigger ulang animasi popUp
+            setTimeout(() => {
+                img.src = photos[index];
+                img.style.animation = 'popUp 0.6s ease-out';
+            }, 50);
+        }
 
         // Hujan Hati Lembut
         const c = document.getElementById('matrix'), ctx = c.getContext('2d');
@@ -91,11 +88,8 @@
         let drops = Array(15).fill(0).map(() => Math.random() * c.height);
         function draw() { 
             ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0, c.width, c.height); 
-            ctx.fillStyle = '#ff69b4'; ctx.font = "25px Arial";
-            drops.forEach((y, i) => { 
-                ctx.fillText("♥", i*(c.width/15), y); 
-                drops[i] = y > c.height ? 0 : y + 1.5; 
-            }); 
+            ctx.fillStyle = '#ff69b4'; ctx.font = "20px Arial";
+            drops.forEach((y, i) => { ctx.fillText("♥", i*(c.width/15), y); drops[i] = y > c.height ? 0 : y + 1.5; }); 
         }
         setInterval(draw, 50);
     </script>
