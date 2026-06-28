@@ -52,7 +52,6 @@
             width: 90%; 
             max-width: 450px; 
             position: relative; 
-            animation: fadeInContent 1.5s ease-out forwards;
         }
 
         @keyframes fadeInContent {
@@ -80,6 +79,12 @@
 
         @keyframes popWord {
             to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Bungkus Album agar bisa di-delay */
+        #album-wrapper {
+            display: none; /* Disembunyikan sampai teks selesai */
+            animation: fadeInContent 1.5s ease-out forwards;
         }
 
         /* Album Gaya Buku Keren */
@@ -158,11 +163,9 @@
             font-weight: 300;
         }
 
-        /* ---------------- FITUR BARU: SURAT RAHASIA ---------------- */
-        
-        /* Tombol Amplop Melayang */
+        /* FITUR SURAT RAHASIA */
         #envelope-btn {
-            display: none; /* Disembunyikan sampai hitung mundur selesai */
+            display: none; 
             position: fixed;
             bottom: 30px;
             right: 30px;
@@ -184,14 +187,13 @@
             100% { transform: translateY(0px); }
         }
 
-        /* Latar Belakang Blur (Modal) */
         #letter-modal {
-            display: none; /* Disembunyikan secara default */
+            display: none; 
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px); /* Efek blur sinematik */
+            backdrop-filter: blur(8px); 
             z-index: 100;
             justify-content: center;
             align-items: center;
@@ -200,7 +202,6 @@
             transition: opacity 0.5s ease;
         }
 
-        /* Kertas Surat / Kotak Glassmorphism */
         .letter-content {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -213,7 +214,6 @@
             position: relative;
         }
 
-        /* Teks Mesin Tik */
         #typewriter-text {
             font-family: 'Poppins', sans-serif;
             font-weight: 300;
@@ -223,7 +223,6 @@
             text-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
 
-        /* Kursor berkedip seperti mesin tik */
         .cursor {
             display: inline-block;
             width: 2px;
@@ -238,7 +237,6 @@
             50% { opacity: 0; }
         }
 
-        /* Tombol Tutup */
         #close-btn {
             margin-top: 20px;
             padding: 10px 25px;
@@ -265,20 +263,24 @@
     <div id="countdown">5</div>
     
     <div id="content">
+        <!-- Area Teks Ucapan -->
         <div id="greeting-text"></div>
         
-        <div class="album-container" onclick="toggleBook()">
-            <div class="book" id="book">
-                <div class="page front">
-                    <h2>📖 Buka</h2>
-                    <p>Tap untuk membuka kenangan</p>
-                </div>
-                <div class="page back" onclick="nextPhoto(event)">
-                    <img id="mainPhoto" src="foto1.jpg" alt="Foto Kenangan">
+        <!-- Area Album (Dibungkus agar bisa disembunyikan awalnya) -->
+        <div id="album-wrapper">
+            <div class="album-container" onclick="toggleBook()">
+                <div class="book" id="book">
+                    <div class="page front">
+                        <h2>📖 Buka</h2>
+                        <p>Tap untuk membuka kenangan</p>
+                    </div>
+                    <div class="page back" onclick="nextPhoto(event)">
+                        <img id="mainPhoto" src="foto1.jpg" alt="Foto Kenangan">
+                    </div>
                 </div>
             </div>
+            <p class="instruction">Tap sampul untuk buka/tutup<br>Tap foto untuk ganti <i>slide</i></p>
         </div>
-        <p class="instruction">Tap sampul untuk buka/tutup<br>Tap foto untuk ganti *slide*</p>
     </div>
 
     <div id="envelope-btn" onclick="openLetter()" title="Ada pesan untukmu!">✉️</div>
@@ -293,11 +295,12 @@
     <audio id="music" loop src="musik.mp3"></audio>
 
     <script>
-        // --- 1. Logika Hitung Mundur & Munculkan Amplop ---
+        // --- 1. Logika Hitung Mundur ---
         let count = 5;
         const countdownEl = document.getElementById('countdown');
         const contentEl = document.getElementById('content');
         const textContainer = document.getElementById('greeting-text');
+        const albumWrapper = document.getElementById('album-wrapper');
         const envelopeBtn = document.getElementById('envelope-btn');
         
         let timer = setInterval(() => {
@@ -313,34 +316,46 @@
                     countdownEl.style.display = 'none';
                     contentEl.style.display = 'block';
                     triggerTextAnimation();
-                    
-                    // Tampilkan amplop setelah 2 detik konten utama muncul
-                    setTimeout(() => {
-                        envelopeBtn.style.display = 'block';
-                    }, 2000);
-                    
                 }, 800);
             }
         }, 1200);
 
-        // --- 2. Logika Animasi Teks Per Kata ---
+        // --- 2. Logika Animasi Teks & Memunculkan Album ---
         const kalimat = "HAPPY BIRTHDAY SAYANG ✨ I LOVE YOU! SEMOGA PANJANG UMUR & BAHAGIA SELALU 🤍";
         
         function triggerTextAnimation() {
             const kataKata = kalimat.split(" ");
             textContainer.innerHTML = ""; 
             
-            kataKata.forEach((kata, index) => {
+            let i = 0;
+            // Gunakan interval agar kata muncul satu per satu seperti hitung mundur
+            let textInterval = setInterval(() => {
                 let span = document.createElement("span");
-                span.innerHTML = kata;
+                span.innerHTML = kataKata[i];
                 span.classList.add("word");
-                span.style.animationDelay = `${index * 0.3}s`; 
                 textContainer.appendChild(span);
                 
-                if(index < kataKata.length - 1) {
+                if(i < kataKata.length - 1) {
                     textContainer.appendChild(document.createTextNode(" "));
                 }
-            });
+                
+                i++;
+                
+                // Jika semua kata sudah muncul
+                if(i >= kataKata.length) {
+                    clearInterval(textInterval);
+                    
+                    // Jeda sejenak, lalu munculkan Album Foto
+                    setTimeout(() => {
+                        albumWrapper.style.display = 'block';
+                        
+                        // Setelah album muncul, munculkan tombol amplop
+                        setTimeout(() => {
+                            envelopeBtn.style.display = 'block';
+                        }, 1500);
+                    }, 800); 
+                }
+            }, 350); // Kecepatan muncul per kata (350 milidetik)
         }
 
         // --- 3. Logika Buku & Audio ---
@@ -366,7 +381,6 @@
         }
 
         // --- 5. Logika Surat Rahasia (Mesin Tik) ---
-        // UBAH TEKS INI SESUAI ISI HATIMU
         const isiSurat = "Hai Sayang... \n\nSelamat ulang tahun ya! Terima kasih sudah selalu jadi alasan aku tersenyum. Lewat kado sederhana ini, aku cuma mau bilang kalau kamu sangat berarti buat aku. \n\nSemoga semua yang kamu impikan bisa tercapai. I love you more than words can say. ❤️";
         
         let charIndex = 0;
@@ -377,7 +391,6 @@
 
         function typeWriter() {
             if (charIndex < isiSurat.length) {
-                // Menangani enter/garis baru
                 if (isiSurat.charAt(charIndex) === '\n') {
                     typewriterText.innerHTML += "<br>";
                 } else {
@@ -385,7 +398,6 @@
                 }
                 charIndex++;
                 
-                // Kecepatan ngetik (random sedikit biar natural seperti manusia)
                 let speed = Math.floor(Math.random() * (80 - 30 + 1)) + 30;
                 typingTimeout = setTimeout(typeWriter, speed);
             } else {
@@ -395,14 +407,12 @@
 
         function openLetter() {
             letterModal.style.display = 'flex';
-            // Efek transisi opacity
             setTimeout(() => { letterModal.style.opacity = '1'; }, 10);
             
-            // Mencegah ngetik ulang dari awal jika sedang ngetik
             if (!isTyping && charIndex === 0) {
                 isTyping = true;
-                typewriterText.innerHTML = ""; // Bersihkan teks
-                typeWriter(); // Mulai ngetik
+                typewriterText.innerHTML = ""; 
+                typeWriter(); 
             }
         }
 
