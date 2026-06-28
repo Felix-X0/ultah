@@ -3,459 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Special Birthday Gift</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
+    <title>Happy Birthday!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
+        body { margin: 0; background: radial-gradient(circle, #1a0620, #000); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        
+        /* Hitung Mundur & Ucapan */
+        #central-display { font-size: 3em; font-weight: 800; text-align: center; z-index: 10; transition: opacity 1s; }
+        .word { display: inline-block; margin: 0 5px; animation: pop 0.5s ease; }
+        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
 
-        body { 
-            margin: 0; 
-            background: radial-gradient(circle at center, #2a0845 0%, #17031a 50%, #000000 100%); 
-            color: white; 
-            font-family: 'Poppins', sans-serif; 
-            text-align: center; 
-            overflow: hidden; 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
+        /* Orbit Foto */
+        #orbit-container { display: none; position: relative; width: 300px; height: 300px; animation: rotate 20s linear infinite; }
+        .photo-item {
+            position: absolute; width: 100px; height: 100px;
+            background-size: cover; background-position: center;
+            border: 4px solid #ff69b4;
+            /* Bentuk Hati */
+            clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+            animation: counter-rotate 20s linear infinite;
         }
         
-        #matrix { 
-            position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; opacity: 0.6;
-        }
-        
-        /* Hitung Mundur */
-        #countdown { 
-            position: absolute; 
-            font-size: 10em; 
-            font-weight: 800;
-            z-index: 3; 
-            color: #fff;
-            text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff1493, 0 0 60px #ff69b4;
-            animation: pulse 1s infinite alternate;
-            transition: opacity 1s ease-out, transform 1s ease-out;
-        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes counter-rotate { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
 
-        @keyframes pulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-        
-        /* Kontainer Utama */
-        #content { 
-            display: none; 
-            z-index: 2; 
-            width: 90%; 
-            max-width: 450px; 
-            position: relative; 
-        }
-
-        @keyframes fadeInContent {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Animasi Teks Per Kata */
-        #greeting-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5em;
-            line-height: 1.3;
-            margin-bottom: 30px;
-            min-height: 120px; 
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px #ff69b4;
-        }
-
-        .word {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(15px) scale(0.9);
-            animation: popWord 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            margin-right: 8px;
-        }
-
-        @keyframes popWord {
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* Bungkus Album agar bisa di-delay */
-        #album-wrapper {
-            display: none; /* Disembunyikan sampai teks selesai */
-            animation: fadeInContent 1.5s ease-out forwards;
-        }
-
-        /* Album Gaya Buku Keren */
-        .album-container { 
-            perspective: 1200px; 
-            width: 320px; 
-            height: 450px; 
-            margin: auto; 
-            cursor: pointer; 
-            filter: drop-shadow(0 0 25px rgba(255, 105, 180, 0.4));
-        }
-        
-        .book { 
-            width: 100%; height: 100%; position: relative; 
-            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1); 
-            transform-style: preserve-3d; 
-        }
-        
-        .book.open { transform: rotateY(-180deg); }
-        
-        .page { 
-            position: absolute; 
-            width: 100%; height: 100%; 
-            backface-visibility: hidden; 
-            border-radius: 15px; 
-            display: flex; justify-content: center; align-items: center; 
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5);
-        }
-        
-        .front { 
-            z-index: 2; 
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            flex-direction: column;
-        }
-
-        .front h2 {
-            font-size: 2em;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px white;
-        }
-        
-        .front p {
-            font-size: 0.9em;
-            color: #ffb6c1;
-            margin-top: 10px;
-        }
-
-        .back { 
-            transform: rotateY(180deg); z-index: 1; 
-            background: #111; 
-            padding: 15px;
-            border: 2px solid #ff69b4;
-        }
-        
-        #mainPhoto { 
-            width: 100%; height: 100%; object-fit: cover; 
-            border-radius: 8px; 
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-            animation: popUp 0.6s ease-out; 
-        }
-        
-        @keyframes popUp { 
-            from { transform: scale(0.8) rotate(-5deg); opacity: 0; } 
-            to { transform: scale(1) rotate(0); opacity: 1; } 
-        }
-
-        .instruction {
-            margin-top: 25px; 
-            font-size: 0.85em; 
-            color: rgba(255,255,255,0.6);
-            letter-spacing: 1px;
-            font-weight: 300;
-        }
-
-        /* FITUR SURAT RAHASIA */
-        #envelope-btn {
-            display: none; 
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            font-size: 2.5em;
-            cursor: pointer;
-            z-index: 10;
-            filter: drop-shadow(0 0 15px #ff69b4);
-            animation: floatEnvelope 3s ease-in-out infinite;
-            transition: transform 0.3s ease;
-        }
-
-        #envelope-btn:hover {
-            transform: scale(1.2);
-        }
-
-        @keyframes floatEnvelope {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-        #letter-modal {
-            display: none; 
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px); 
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .letter-content {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 90%;
-            width: 400px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            text-align: left;
-            position: relative;
-        }
-
-        #typewriter-text {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 300;
-            font-size: 1em;
-            line-height: 1.6;
-            color: #fff;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.2em;
-            background-color: #ff69b4;
-            vertical-align: middle;
-            animation: blink 0.7s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        #close-btn {
-            margin-top: 20px;
-            padding: 10px 25px;
-            background: transparent;
-            border: 2px solid #ff69b4;
-            color: #ff69b4;
-            border-radius: 20px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        #close-btn:hover {
-            background: #ff69b4;
-            color: white;
-            box-shadow: 0 0 15px #ff69b4;
-        }
+        /* Posisi Foto */
+        .p1 { top: -50px; left: 100px; }
+        .p2 { top: 100px; left: 250px; }
+        .p3 { top: 250px; left: 100px; }
+        .p4 { top: 100px; left: -50px; }
     </style>
 </head>
 <body>
-    <canvas id="matrix"></canvas>
+
+    <div id="central-display">5</div>
     
-    <div id="countdown">5</div>
-    
-    <div id="content">
-        <!-- Area Teks Ucapan -->
-        <div id="greeting-text"></div>
-        
-        <!-- Area Album (Dibungkus agar bisa disembunyikan awalnya) -->
-        <div id="album-wrapper">
-            <div class="album-container" onclick="toggleBook()">
-                <div class="book" id="book">
-                    <div class="page front">
-                        <h2>📖 Buka</h2>
-                        <p>Tap untuk membuka kenangan</p>
-                    </div>
-                    <div class="page back" onclick="nextPhoto(event)">
-                        <img id="mainPhoto" src="foto1.jpg" alt="Foto Kenangan">
-                    </div>
-                </div>
-            </div>
-            <p class="instruction">Tap sampul untuk buka/tutup<br>Tap foto untuk ganti <i>slide</i></p>
-        </div>
+    <div id="orbit-container">
+        <div class="photo-item p1" style="background-image: url('foto1.jpg');"></div>
+        <div class="photo-item p2" style="background-image: url('foto2.jpg');"></div>
+        <div class="photo-item p3" style="background-image: url('foto3.jpg');"></div>
+        <div class="photo-item p4" style="background-image: url('foto4.jpg');"></div>
     </div>
 
-    <div id="envelope-btn" onclick="openLetter()" title="Ada pesan untukmu!">✉️</div>
-
-    <div id="letter-modal">
-        <div class="letter-content">
-            <span id="typewriter-text"></span><span class="cursor"></span>
-        </div>
-        <button id="close-btn" onclick="closeLetter()">Tutup Surat</button>
-    </div>
-
-    <audio id="music" loop src="musik.mp3"></audio>
+    <audio id="music" src="musik.mp3"></audio>
 
     <script>
-        // --- 1. Logika Hitung Mundur ---
+        const display = document.getElementById('central-display');
+        const orbit = document.getElementById('orbit-container');
+        const audio = document.getElementById('music');
         let count = 5;
-        const countdownEl = document.getElementById('countdown');
-        const contentEl = document.getElementById('content');
-        const textContainer = document.getElementById('greeting-text');
-        const albumWrapper = document.getElementById('album-wrapper');
-        const envelopeBtn = document.getElementById('envelope-btn');
-        
+
+        // 1. Hitung Mundur
         let timer = setInterval(() => {
             count--;
             if (count > 0) {
-                countdownEl.innerText = count;
+                display.innerText = count;
             } else {
                 clearInterval(timer);
-                countdownEl.style.opacity = '0';
-                countdownEl.style.transform = 'scale(2)';
-                
+                startGreeting();
+            }
+        }, 1000);
+
+        // 2. Animasi Ucapan
+        function startGreeting() {
+            display.innerText = "";
+            const text = "HAPPY BIRTHDAY SAYANG!".split(" ");
+            text.forEach((word, i) => {
                 setTimeout(() => {
-                    countdownEl.style.display = 'none';
-                    contentEl.style.display = 'block';
-                    triggerTextAnimation();
-                }, 800);
-            }
-        }, 1200);
+                    let span = document.createElement("span");
+                    span.className = "word";
+                    span.innerText = word;
+                    display.appendChild(span);
+                }, i * 500);
+            });
 
-        // --- 2. Logika Animasi Teks & Memunculkan Album ---
-        const kalimat = "HAPPY BIRTHDAY SAYANG ✨ I LOVE YOU! SEMOGA PANJANG UMUR & BAHAGIA SELALU 🤍";
-        
-        function triggerTextAnimation() {
-            const kataKata = kalimat.split(" ");
-            textContainer.innerHTML = ""; 
-            
-            let i = 0;
-            // Gunakan interval agar kata muncul satu per satu seperti hitung mundur
-            let textInterval = setInterval(() => {
-                let span = document.createElement("span");
-                span.innerHTML = kataKata[i];
-                span.classList.add("word");
-                textContainer.appendChild(span);
-                
-                if(i < kataKata.length - 1) {
-                    textContainer.appendChild(document.createTextNode(" "));
-                }
-                
-                i++;
-                
-                // Jika semua kata sudah muncul
-                if(i >= kataKata.length) {
-                    clearInterval(textInterval);
-                    
-                    // Jeda sejenak, lalu munculkan Album Foto
-                    setTimeout(() => {
-                        albumWrapper.style.display = 'block';
-                        
-                        // Setelah album muncul, munculkan tombol amplop
-                        setTimeout(() => {
-                            envelopeBtn.style.display = 'block';
-                        }, 1500);
-                    }, 800); 
-                }
-            }, 350); // Kecepatan muncul per kata (350 milidetik)
+            // 3. Hilangkan ucapan dan munculkan album
+            setTimeout(() => {
+                display.style.opacity = '0';
+                setTimeout(() => {
+                    display.style.display = 'none';
+                    orbit.style.display = 'block';
+                    audio.play(); // Musik mulai saat album muncul
+                }, 1000);
+            }, text.length * 500 + 1000);
         }
-
-        // --- 3. Logika Buku & Audio ---
-        let audio = document.getElementById('music');
-        function toggleBook() {
-            document.getElementById('book').classList.toggle('open');
-            if (audio.paused) { audio.play(); }
-        }
-
-        // --- 4. Logika Slide Foto ---
-        let photos = ["foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg"];
-        let index = 0;
-        function nextPhoto(e) {
-            e.stopPropagation(); 
-            index = (index + 1) % photos.length;
-            let img = document.getElementById('mainPhoto');
-            
-            img.style.animation = 'none';
-            void img.offsetWidth; 
-            
-            img.src = photos[index];
-            img.style.animation = 'popUp 0.6s ease-out';
-        }
-
-        // --- 5. Logika Surat Rahasia (Mesin Tik) ---
-        const isiSurat = "Hai Sayang... \n\nSelamat ulang tahun ya! Terima kasih sudah selalu jadi alasan aku tersenyum. Lewat kado sederhana ini, aku cuma mau bilang kalau kamu sangat berarti buat aku. \n\nSemoga semua yang kamu impikan bisa tercapai. I love you more than words can say. ❤️";
-        
-        let charIndex = 0;
-        let isTyping = false;
-        let typingTimeout;
-        const letterModal = document.getElementById('letter-modal');
-        const typewriterText = document.getElementById('typewriter-text');
-
-        function typeWriter() {
-            if (charIndex < isiSurat.length) {
-                if (isiSurat.charAt(charIndex) === '\n') {
-                    typewriterText.innerHTML += "<br>";
-                } else {
-                    typewriterText.innerHTML += isiSurat.charAt(charIndex);
-                }
-                charIndex++;
-                
-                let speed = Math.floor(Math.random() * (80 - 30 + 1)) + 30;
-                typingTimeout = setTimeout(typeWriter, speed);
-            } else {
-                isTyping = false;
-            }
-        }
-
-        function openLetter() {
-            letterModal.style.display = 'flex';
-            setTimeout(() => { letterModal.style.opacity = '1'; }, 10);
-            
-            if (!isTyping && charIndex === 0) {
-                isTyping = true;
-                typewriterText.innerHTML = ""; 
-                typeWriter(); 
-            }
-        }
-
-        function closeLetter() {
-            letterModal.style.opacity = '0';
-            setTimeout(() => { 
-                letterModal.style.display = 'none'; 
-            }, 500);
-        }
-
-        // --- 6. Efek Hujan Hati ---
-        const c = document.getElementById('matrix');
-        const ctx = c.getContext('2d');
-        
-        function resizeCanvas() {
-            c.width = window.innerWidth; 
-            c.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        let drops = Array(Math.floor(window.innerWidth / 30)).fill(0).map(() => Math.random() * c.height);
-        
-        function draw() { 
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; 
-            ctx.fillRect(0, 0, c.width, c.height); 
-            
-            ctx.font = "20px Arial";
-            ctx.textAlign = "center";
-            
-            drops.forEach((y, i) => { 
-                const colors = ['#ff69b4', '#ff1493', '#fff0f5'];
-                ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
-                ctx.fillText("♥", i * 30, y); 
-                
-                if (y > c.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                } else {
-                    drops[i] = y + 2; 
-                }
-            }); 
-        }
-        setInterval(draw, 50);
     </script>
 </body>
 </html>
