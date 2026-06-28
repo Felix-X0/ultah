@@ -3,253 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday!</title>
+    <title>Surprise For You</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            margin: 0; 
-            /* Latar belakang gelap agar hujan hati terlihat jelas */
-            background: linear-gradient(135deg, #0b0710, #1f183d, #141424); 
+            background-color: #050510; /* Warna gelap malam */
             color: white; 
             font-family: 'Poppins', sans-serif; 
             overflow: hidden; 
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
         }
 
-        /* --- EFEK HUJAN HATI --- */
-        #heart-rain {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            pointer-events: none; /* Agar hujan hati tidak bisa di-klik/mengganggu tombol */
-            z-index: 1; /* Posisi di paling belakang */
-            overflow: hidden;
-        }
-        .falling-heart {
+        /* --- KANVAS KEMBANG API --- */
+        #fireworks-canvas {
             position: absolute;
-            top: -10vh;
-            color: #ff477e;
-            animation: fall linear forwards;
-            opacity: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Di belakang konten */
         }
-        @keyframes fall {
-            0% { transform: translateY(0); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { transform: translateY(110vh); opacity: 0; }
-        }
-        /* ------------------------ */
 
-        /* Elemen Utama (berada di atas hujan) */
-        .content-wrapper {
+        /* --- KONTEN PESAN NEON --- */
+        #content-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 10;
+            pointer-events: none; /* Agar klik tembus ke tombol */
+        }
+
+        .neon-box {
+            position: absolute;
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-direction: column;
+            background: rgba(20, 0, 20, 0.6);
+            border: 2px solid #ff2a85;
+            border-radius: 50px;
+            padding: 8px 20px;
+            box-shadow: 0 0 15px #ff2a85, inset 0 0 10px #ff2a85;
+            animation: float-anim 4s infinite ease-in-out alternate;
+            pointer-events: auto;
         }
 
-        /* Tombol Mulai */
-        #start-btn {
-            padding: 15px 35px;
-            font-size: 1.2em;
+        .neon-box img {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 1px solid #ff2a85;
+            box-shadow: 0 0 10px #ff2a85;
+        }
+
+        .neon-box span {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.3em;
+            color: #ffd1dc;
+            text-shadow: 0 0 5px #ff2a85;
+        }
+
+        /* Animasi Mengambang */
+        @keyframes float-anim {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-15px) scale(1.02); }
+        }
+
+        /* Posisi Box (Bisa kamu atur ulang posisinya dengan mengubah persentase) */
+        .box1 { top: 20%; left: 10%; animation-delay: 0s; }
+        .box2 { top: 40%; right: 10%; animation-delay: 1s; }
+        .box3 { top: 60%; left: 5%; animation-delay: 2s; }
+        .box4 { top: 75%; right: 15%; animation-delay: 0.5s; }
+
+        /* --- TOMBOL CLOSE --- */
+        #close-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 30px;
+            font-size: 1em;
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
             color: #fff;
-            background: #ff477e;
-            border: none;
-            border-radius: 50px;
+            background: transparent;
+            border: 2px solid #ff2a85;
+            border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 71, 126, 0.5);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        #start-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(255, 71, 126, 0.7);
+            box-shadow: 0 0 15px #ff2a85, inset 0 0 8px #ff2a85;
+            z-index: 20;
+            pointer-events: auto;
+            transition: all 0.3s ease;
         }
 
-        /* Hitung Mundur & Ucapan */
-        #central-display { 
-            font-size: 4.5em; 
-            font-weight: 700; 
-            text-align: center; 
-            position: absolute;
-            transition: opacity 1s, transform 0.3s; 
-            display: none; 
+        #close-btn:hover {
+            background: #ff2a85;
+            box-shadow: 0 0 25px #ff2a85;
         }
-        
-        .word { 
-            display: inline-block; 
-            margin: 0 10px; 
-            opacity: 0;
-            font-family: 'Dancing Script', cursive; 
-            color: #ff9a9e;
-            text-shadow: 0 0 15px rgba(255, 154, 158, 0.8);
-            animation: popUp 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; 
-        }
-        @keyframes popUp { 
-            0% { transform: scale(0) translateY(20px); opacity: 0; } 
-            100% { transform: scale(1) translateY(0); opacity: 1; } 
-        }
-
-        /* Orbit Foto */
-        #orbit-container { 
-            display: none; 
-            position: relative; 
-            width: 300px; 
-            height: 300px; 
-            animation: rotate 20s linear infinite; 
-            opacity: 0;
-            transition: opacity 2s ease-in;
-        }
-        
-        .center-heart {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 50px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .photo-item {
-            position: absolute; 
-            width: 100px; 
-            height: 100px;
-            background-size: cover; 
-            background-position: center;
-            border: 3px solid #ff477e;
-            border-radius: 50%;
-            box-shadow: 0 0 25px rgba(255, 71, 126, 0.6);
-            animation: counter-rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes counter-rotate { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-
-        /* Posisi Foto */
-        .p1 { top: -50px; left: 100px; background-image: url('foto1.jpg'); }
-        .p2 { top: 100px; left: 250px; background-image: url('foto2.jpg'); }
-        .p3 { top: 250px; left: 100px; background-image: url('foto3.jpg'); }
-        .p4 { top: 100px; left: -50px; background-image: url('foto4.jpg'); }
     </style>
 </head>
 <body>
 
-    <div id="heart-rain"></div>
+    <canvas id="fireworks-canvas"></canvas>
 
-    <div class="content-wrapper">
-        <button id="start-btn">Buka Kejutan 🎁</button>
+    <div id="content-layer">
         
-        <div id="central-display">5</div>
-        
-        <div id="orbit-container">
-            <div class="center-heart">❤️</div>
-            <div class="photo-item p1"></div>
-            <div class="photo-item p2"></div>
-            <div class="photo-item p3"></div>
-            <div class="photo-item p4"></div>
+        <div class="neon-box box1">
+            <img src="foto1.jpg" alt="Foto">
+            <span>Happy birthday sayang... You mean everything ✨</span>
         </div>
+
+        <div class="neon-box box2">
+            <span>Memilikimu setiap hari adalah kado terindah ❤️</span>
+        </div>
+
+        <div class="neon-box box3">
+            <img src="foto2.jpg" alt="Foto">
+            <span>Waktu berlalu, tapi rasa ini tetap sama. Always.</span>
+        </div>
+
+        <div class="neon-box box4">
+            <span>My love... masih sama, selalu sama. 💕</span>
+        </div>
+
+        <button id="close-btn">CLOSE</button>
     </div>
 
-    <audio id="music" src="musik.mp3"></audio>
+    <audio id="music" src="musik.mp3" autoplay loop></audio>
 
     <script>
-        // --- LOGIKA HUJAN HATI ---
-        const heartContainer = document.getElementById('heart-rain');
-        const heartIcons = ['❤️', '💖', '💕', '💗']; // Variasi bentuk hati
+        // --- LOGIKA KEMBANG API (FIREWORKS) DENGAN CANVAS ---
+        const canvas = document.getElementById("fireworks-canvas");
+        const ctx = canvas.getContext("2d");
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('falling-heart');
-            
-            // Pilih ikon hati secara acak
-            heart.innerText = heartIcons[Math.floor(Math.random() * heartIcons.length)];
-            
-            // Pengaturan posisi, ukuran, dan kecepatan secara acak (Lambat / Slow)
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 5 + 6 + 's'; // Waktu jatuh 6 - 11 detik (Sangat lambat)
-            heart.style.fontSize = Math.random() * 15 + 10 + 'px'; // Ukuran 10px - 25px
-            
-            // Sedikit efek buram (blur) acak untuk kedalaman
-            const isBlurred = Math.random() > 0.5;
-            if(isBlurred) heart.style.filter = `blur(${Math.random() * 2}px)`;
-
-            heartContainer.appendChild(heart);
-
-            // Hapus elemen setelah selesai turun agar web tidak lag
-            setTimeout(() => {
-                heart.remove();
-            }, 12000); 
-        }
-
-        // Munculkan hati setiap 300 milidetik
-        setInterval(createHeart, 300);
-        // -------------------------
-
-        // --- LOGIKA KEJUTAN (SAMA SEPERTI SEBELUMNYA) ---
-        const startBtn = document.getElementById('start-btn');
-        const display = document.getElementById('central-display');
-        const orbit = document.getElementById('orbit-container');
-        const audio = document.getElementById('music');
-        let count = 5;
-
-        startBtn.addEventListener('click', () => {
-            startBtn.style.display = 'none';
-            display.style.display = 'block';
-
-            let timer = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    display.style.transform = 'scale(0.8)';
-                    setTimeout(() => {
-                        display.innerText = count;
-                        display.style.transform = 'scale(1)';
-                    }, 100);
-                } else {
-                    clearInterval(timer);
-                    startGreeting();
-                }
-            }, 1000);
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         });
 
-        function startGreeting() {
-            display.innerText = "";
-            const text = "HAPPY BIRTHDAY SAYANG!".split(" ");
-            text.forEach((word, i) => {
-                setTimeout(() => {
-                    let span = document.createElement("span");
-                    span.className = "word";
-                    span.innerText = word;
-                    display.appendChild(span);
-                }, i * 600);
-            });
-
-            setTimeout(() => {
-                display.style.opacity = '0';
-                
-                setTimeout(() => {
-                    display.style.display = 'none';
-                    orbit.style.display = 'block';
-                    
-                    setTimeout(() => { orbit.style.opacity = '1'; }, 50);
-                    
-                    audio.play().catch(error => {
-                        console.log("Audio gagal diputar:", error);
-                    });
-                }, 1000);
-            }, text.length * 600 + 1500);
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 2 + 1;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.friction = 0.98;
+                this.gravity = 0.05;
+                this.opacity = 1;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.opacity -= 0.015;
+            }
         }
+
+        let particles = [];
+        const colors = ['#ff2a85', '#ff7eb3', '#8a2be2', '#00e5ff', '#ffffff'];
+
+        function createFirework(x, y) {
+            const particleCount = 100;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animateFireworks() {
+            requestAnimationFrame(animateFireworks);
+            ctx.fillStyle = "rgba(5, 5, 16, 0.2)"; // Efek jejak kembang api
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((particle, index) => {
+                if (particle.opacity <= 0) {
+                    particles.splice(index, 1);
+                } else {
+                    particle.update();
+                    particle.draw();
+                }
+            });
+        }
+
+        // Tembakkan kembang api secara acak setiap beberapa detik
+        setInterval(() => {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * (canvas.height / 2); // Meledak di bagian atas layar
+            createFirework(x, y);
+        }, 800);
+
+        // Kembang api di posisi klik (interaktif)
+        canvas.addEventListener("click", (e) => {
+            createFirework(e.clientX, e.clientY);
+        });
+
+        animateFireworks();
+
+        // --- TOMBOL CLOSE (Opsional) ---
+        document.getElementById('close-btn').addEventListener('click', () => {
+            alert("Tombol close ditekan. Kamu bisa menambahkan aksi lain di sini!");
+            // Misalnya: window.close(); atau mengarahkan ke halaman lain
+        });
     </script>
 </body>
 </html>
