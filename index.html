@@ -15,9 +15,6 @@
             overflow: hidden; 
             width: 100vw;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         /* --- KANVAS KEMBANG API --- */
@@ -40,7 +37,7 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Agar klik tembus ke tombol */
+            pointer-events: none;
         }
 
         #start-btn {
@@ -85,18 +82,16 @@
             padding: 0 20px;
         }
 
-        /* --- KONTEN PESAN NEON MELAYANG --- */
-        #content-layer {
+        /* --- CONTAINER PESAN BERGULIR --- */
+        #message-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 10;
-            display: none; /* Disembunyikan sampai intro selesai */
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            pointer-events: none; 
+            overflow: hidden;
+            pointer-events: none;
         }
 
         .neon-box {
@@ -104,75 +99,78 @@
             display: flex;
             align-items: center;
             background: rgba(20, 0, 20, 0.6);
-            border: 1px solid #ff2a85;
+            border: 2px solid #ff2a85;
             border-radius: 40px;
-            padding: 8px 15px;
+            padding: 10px 20px;
             box-shadow: 0 0 12px #ff2a85, inset 0 0 8px #ff2a85;
-            animation: float-anim 4s infinite ease-in-out alternate;
+            max-width: 85%;
+            opacity: 0; /* Mulai dengan transparan */
+            /* Animasi jalan dari bawah ke atas */
+            animation: scrollUp 15s linear forwards; 
             pointer-events: auto;
-            max-width: 80%; /* Agar tidak keluar layar di HP */
         }
 
         .neon-box img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px; /* Dibuat agak kotak seperti di foto */
             object-fit: cover;
-            margin-right: 12px;
+            margin-right: 15px;
             border: 1px solid #ff2a85;
             box-shadow: 0 0 8px #ff2a85;
         }
 
         .neon-box span {
             font-family: 'Dancing Script', cursive;
-            font-size: 1.1em;
+            font-size: 1.2em;
             color: #ffd1dc;
             text-shadow: 0 0 5px #ff2a85;
         }
 
-        /* Animasi Mengambang berbeda-beda delay-nya */
-        @keyframes float-anim {
-            0% { transform: translateY(0px) scale(1); }
-            100% { transform: translateY(-20px) scale(1.03); }
+        /* Kelas untuk posisi kiri, kanan, tengah */
+        .align-left { left: 5%; }
+        .align-right { right: 5%; }
+        .align-center { left: 50%; transform: translateX(-50%); }
+
+        /* Keyframes untuk jalan ke atas dan menghilang */
+        @keyframes scrollUp {
+            0% { top: 110%; opacity: 0; }
+            5% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: -20%; opacity: 0; }
         }
 
-        /* Posisi Box - Menyebar di layar */
-        .box1 { top: 15%; left: 5%; animation-delay: 0s; }
-        .box2 { top: 25%; right: 5%; animation-delay: 1.5s; }
-        .box3 { top: 40%; left: 10%; animation-delay: 0.5s; }
-        .box4 { top: 52%; right: 8%; animation-delay: 2s; }
-        .box5 { top: 65%; left: 5%; animation-delay: 1s; }
-        .box6 { top: 78%; right: 12%; animation-delay: 2.5s; }
-        .box7 { top: 88%; left: 15%; animation-delay: 0.8s; }
-        .box8 { top: 10%; right: 20%; animation-delay: 1.2s; }
-
         /* --- TOMBOL CLOSE --- */
-        #close-btn {
+        #close-wrapper {
             position: absolute;
             bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 8px 25px;
-            font-size: 0.9em;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 30;
+            opacity: 0; /* Tersembunyi di awal */
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+
+        #close-btn {
+            padding: 8px 30px;
+            font-size: 1em;
             font-weight: 600;
             color: #fff;
-            background: transparent;
+            background: rgba(0,0,0,0.5);
             border: 2px solid #ff2a85;
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 0 10px #ff2a85, inset 0 0 5px #ff2a85;
-            z-index: 20;
             pointer-events: auto;
-            transition: all 0.3s ease;
         }
         #close-btn:hover { background: #ff2a85; }
 
-        /* Responsif untuk layar HP kecil */
         @media (max-width: 600px) {
             #greeting-display { font-size: 2.5em; }
-            .neon-box span { font-size: 0.9em; }
-            .neon-box { padding: 6px 12px; }
-            .box8 { display: none; } /* Sembunyikan 1 kotak jika layar terlalu sempit */
+            .neon-box span { font-size: 1em; }
+            .neon-box { padding: 8px 15px; }
         }
     </style>
 </head>
@@ -186,82 +184,60 @@
         <div id="greeting-display">HAPPY BIRTHDAY<br>SAYANG! 🎉</div>
     </div>
 
-    <div id="content-layer">
-        <div class="neon-box box1">
-            <img src="foto1.jpg" alt="❤️">
-            <span>You mean everything to me ✨</span>
-        </div>
-        <div class="neon-box box2">
-            <span>Memilikimu adalah kado terindahku ❤️</span>
-        </div>
-        <div class="neon-box box3">
-            <img src="foto2.jpg" alt="❤️">
-            <span>Waktu berlalu, rasa ini tetap sama.</span>
-        </div>
-        <div class="neon-box box4">
-            <span>Always be mine, forever. 💕</span>
-        </div>
-        <div class="neon-box box5">
-            <img src="foto3.jpg" alt="❤️">
-            <span>Terima kasih sudah jadi yang terbaik!</span>
-        </div>
-        <div class="neon-box box6">
-            <span>Semoga harimu seindah senyummu 😊</span>
-        </div>
-        <div class="neon-box box7">
-            <span>I love you to the moon and back 🌙</span>
-        </div>
-        <div class="neon-box box8">
-            <span>Happy level up, sayangku! 🎂</span>
-        </div>
+    <div id="message-container"></div>
 
+    <div id="close-wrapper">
         <button id="close-btn">CLOSE</button>
     </div>
 
     <audio id="music" src="musik.mp3"></audio>
 
     <script>
-        // --- LOGIKA KEMBANG API (Jalan Terus di Background) ---
+        // ==========================================
+        // 1. DATA PESAN (TAMBAHKAN SEBANYAK MUNGKIN DI SINI)
+        // ==========================================
+        const wishMessages = [
+            { text: "You mean everything to me ✨", img: "foto1.jpg", pos: "align-left" },
+            { text: "Memilikimu adalah kado terindahku ❤️", img: null, pos: "align-right" },
+            { text: "Waktu berlalu, rasa ini tetap sama.", img: "foto2.jpg", pos: "align-left" },
+            { text: "Always be mine, forever. 💕", img: null, pos: "align-right" },
+            { text: "Terima kasih sudah jadi yang terbaik!", img: "foto3.jpg", pos: "align-left" },
+            { text: "Semoga harimu seindah senyummu 😊", img: null, pos: "align-right" },
+            { text: "I love you to the moon and back 🌙", img: null, pos: "align-center" },
+            { text: "Semoga semua impianmu tercapai tahun ini 🌟", img: "foto1.jpg", pos: "align-left" },
+            { text: "Aku akan selalu ada buat kamu 🥰", img: null, pos: "align-right" },
+            { text: "Sehat selalu dan bahagia terus ya! 💖", img: null, pos: "align-left" },
+            { text: "Can't wait to make more memories with you 📸", img: "foto2.jpg", pos: "align-right" },
+            { text: "You are my sunshine ☀️", img: null, pos: "align-left" },
+            { text: "Happy Level Up sayangku! 🎂", img: null, pos: "align-center" }
+        ];
+        // Cara tambah: { text: "Pesanmu", img: "namafoto.jpg" (atau null kalau tanpa foto), pos: "align-left/right/center" }
+
+
+        // ==========================================
+        // 2. LOGIKA KEMBANG API
+        // ==========================================
         const canvas = document.getElementById("fireworks-canvas");
         const ctx = canvas.getContext("2d");
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        window.addEventListener("resize", () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        window.addEventListener("resize", () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
         class Particle {
             constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.color = color;
+                this.x = x; this.y = y; this.color = color;
                 this.radius = Math.random() * 2 + 1;
                 this.velocity = { x: (Math.random() - 0.5) * 8, y: (Math.random() - 0.5) * 8 };
-                this.friction = 0.98;
-                this.gravity = 0.05;
-                this.opacity = 1;
+                this.friction = 0.98; this.gravity = 0.05; this.opacity = 1;
             }
             draw() {
-                ctx.save();
-                ctx.globalAlpha = this.opacity;
-                ctx.beginPath();
+                ctx.save(); ctx.globalAlpha = this.opacity; ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.restore();
+                ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = this.color;
+                ctx.fill(); ctx.restore();
             }
             update() {
-                this.velocity.x *= this.friction;
-                this.velocity.y *= this.friction;
-                this.velocity.y += this.gravity;
-                this.x += this.velocity.x;
-                this.y += this.velocity.y;
-                this.opacity -= 0.015;
+                this.velocity.x *= this.friction; this.velocity.y *= this.friction; this.velocity.y += this.gravity;
+                this.x += this.velocity.x; this.y += this.velocity.y; this.opacity -= 0.015;
             }
         }
 
@@ -269,10 +245,8 @@
         const colors = ['#ff2a85', '#ff7eb3', '#8a2be2', '#00e5ff', '#ffffff'];
 
         function createFirework(x, y) {
-            const particleCount = 100;
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle(x, y, color));
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(x, y, colors[Math.floor(Math.random() * colors.length)]));
             }
         }
 
@@ -286,45 +260,33 @@
             });
         }
 
-        // Tembak kembang api acak
-        setInterval(() => {
-            const x = Math.random() * canvas.width;
-            const y = Math.random() * (canvas.height / 2);
-            createFirework(x, y);
-        }, 800);
-
-        // Kembang api saat di-klik
-        canvas.addEventListener("click", (e) => {
-            createFirework(e.clientX, e.clientY);
-        });
-
+        setInterval(() => { createFirework(Math.random() * canvas.width, Math.random() * (canvas.height / 2)); }, 800);
+        canvas.addEventListener("click", (e) => { createFirework(e.clientX, e.clientY); });
         animateFireworks();
 
-        // --- LOGIKA HITUNG MUNDUR & UCAPAN ---
+        // ==========================================
+        // 3. LOGIKA HITUNG MUNDUR & PESAN BERGULIR
+        // ==========================================
         const startBtn = document.getElementById('start-btn');
         const countdownDisplay = document.getElementById('countdown-display');
         const greetingDisplay = document.getElementById('greeting-display');
-        const contentLayer = document.getElementById('content-layer');
+        const messageContainer = document.getElementById('message-container');
+        const closeWrapper = document.getElementById('close-wrapper');
         const audio = document.getElementById('music');
 
         startBtn.addEventListener('click', () => {
-            // Sembunyikan tombol, mainkan musik
             startBtn.style.display = 'none';
-            audio.play().catch(e => console.log("Audio autoplay diblokir browser"));
-            
-            // Tampilkan hitung mundur
+            audio.play().catch(e => console.log("Audio diblokir"));
             countdownDisplay.style.display = 'block';
-            let count = 3; // Mulai dari 3
+            
+            let count = 3;
             countdownDisplay.innerText = count;
 
             let timer = setInterval(() => {
                 count--;
                 if (count > 0) {
                     countdownDisplay.style.transform = 'scale(0.7)';
-                    setTimeout(() => {
-                        countdownDisplay.innerText = count;
-                        countdownDisplay.style.transform = 'scale(1)';
-                    }, 100);
+                    setTimeout(() => { countdownDisplay.innerText = count; countdownDisplay.style.transform = 'scale(1)'; }, 100);
                 } else {
                     clearInterval(timer);
                     countdownDisplay.style.display = 'none';
@@ -334,32 +296,47 @@
         });
 
         function showGreeting() {
-            // Munculkan tulisan "HAPPY BIRTHDAY SAYANG!"
             greetingDisplay.style.display = 'block';
-            
-            // Tunggu 3 detik, lalu pudar dan munculkan pesan melayang
             setTimeout(() => {
                 greetingDisplay.style.opacity = '0'; 
-                
                 setTimeout(() => {
                     greetingDisplay.style.display = 'none';
-                    contentLayer.style.display = 'block'; // Tampilkan container pesan
+                    startScrollingMessages(); // Jalankan pesan bergulir
                     
-                    // Efek fade-in halus untuk pesan melayang
-                    setTimeout(() => {
-                        contentLayer.style.opacity = '1';
-                    }, 50);
-                }, 1000); // Waktu memudar tulisan
-            }, 3000); // Berapa lama tulisan Happy Birthday tampil di layar
+                    // Tampilkan tombol close setelah beberapa detik
+                    setTimeout(() => { closeWrapper.style.opacity = '1'; }, 3000);
+                }, 1000); 
+            }, 3000);
         }
 
-        // Tombol Close Opsional
+        function startScrollingMessages() {
+            wishMessages.forEach((msg, index) => {
+                // Buat elemen kotak neon baru
+                const box = document.createElement('div');
+                box.className = `neon-box ${msg.pos}`;
+                
+                // Isi kotaknya (Foto jika ada + Teks)
+                let innerHTML = '';
+                if (msg.img) {
+                    innerHTML += `<img src="${msg.img}" alt="foto">`;
+                }
+                innerHTML += `<span>${msg.text}</span>`;
+                box.innerHTML = innerHTML;
+
+                // Atur jeda waktu (delay) agar muncul berurutan
+                // Setiap kotak akan muncul selang 2.5 detik
+                box.style.animationDelay = `${index * 2.5}s`;
+
+                // Masukkan ke dalam container
+                messageContainer.appendChild(box);
+            });
+        }
+
+        // Tombol Close
         document.getElementById('close-btn').addEventListener('click', () => {
-            contentLayer.style.opacity = '0';
-            setTimeout(() => {
-                contentLayer.style.display = 'none';
-                startBtn.style.display = 'block'; // Kembali ke awal
-            }, 1000);
+            messageContainer.innerHTML = ''; // Hapus semua pesan
+            closeWrapper.style.opacity = '0';
+            setTimeout(() => { startBtn.style.display = 'block'; }, 1000);
         });
     </script>
 </body>
