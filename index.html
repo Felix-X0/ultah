@@ -4,92 +4,301 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Special Birthday Gift</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { 
-            margin: 0; background: black; color: white; font-family: 'Georgia', serif; 
-            text-align: center; overflow: hidden; height: 100vh; display: flex; 
-            flex-direction: column; align-items: center; justify-content: center; 
+        * {
+            box-sizing: border-box;
         }
-        #matrix { position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; }
-        
-        #countdown { position: absolute; font-size: 8em; z-index: 2; text-shadow: 0 0 20px white; }
-        
-        #content { display: none; z-index: 1; width: 90%; max-width: 400px; position: relative; }
-        .big-running-text { font-size: 2em; font-weight: 900; color: white; text-shadow: 0 0 10px white, 0 0 20px #ff00ff; margin-bottom: 20px; }
 
-        /* Album Gaya Buku */
-        .album-container { perspective: 1000px; width: 300px; height: 420px; margin: auto; cursor: pointer; }
-        .book { width: 100%; height: 100%; position: relative; transition: transform 1s; transform-style: preserve-3d; }
+        body { 
+            margin: 0; 
+            background: radial-gradient(circle at center, #2a0845 0%, #17031a 50%, #000000 100%); 
+            color: white; 
+            font-family: 'Poppins', sans-serif; 
+            text-align: center; 
+            overflow: hidden; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        #matrix { 
+            position: fixed; top: 0; left: 0; z-index: 0; width: 100%; height: 100%; opacity: 0.6;
+        }
+        
+        /* Hitung Mundur */
+        #countdown { 
+            position: absolute; 
+            font-size: 10em; 
+            font-weight: 800;
+            z-index: 3; 
+            color: #fff;
+            text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff1493, 0 0 60px #ff69b4;
+            animation: pulse 1s infinite alternate;
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        
+        /* Kontainer Utama */
+        #content { 
+            display: none; 
+            z-index: 2; 
+            width: 90%; 
+            max-width: 450px; 
+            position: relative; 
+            animation: fadeInContent 1.5s ease-out forwards;
+        }
+
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animasi Teks Per Kata */
+        #greeting-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5em;
+            line-height: 1.3;
+            margin-bottom: 30px;
+            min-height: 120px; /* Menjaga tata letak agar tidak melompat */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px #ff69b4;
+        }
+
+        .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(15px) scale(0.9);
+            animation: popWord 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            margin-right: 8px;
+        }
+
+        @keyframes popWord {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Album Gaya Buku Keren (Glassmorphism) */
+        .album-container { 
+            perspective: 1200px; 
+            width: 320px; 
+            height: 450px; 
+            margin: auto; 
+            cursor: pointer; 
+            filter: drop-shadow(0 0 25px rgba(255, 105, 180, 0.4));
+        }
+        
+        .book { 
+            width: 100%; height: 100%; position: relative; 
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1); 
+            transform-style: preserve-3d; 
+        }
+        
         .book.open { transform: rotateY(-180deg); }
         
-        .page { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border: 3px solid white; border-radius: 10px; display: flex; justify-content: center; align-items: center; background: #222; }
-        .front { z-index: 2; }
-        .back { transform: rotateY(180deg); z-index: 1; padding: 10px; box-sizing: border-box; }
+        .page { 
+            position: absolute; 
+            width: 100%; height: 100%; 
+            backface-visibility: hidden; 
+            border-radius: 15px; 
+            display: flex; justify-content: center; align-items: center; 
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5);
+        }
         
-        /* Foto tunggal */
-        #mainPhoto { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; animation: popUp 0.6s ease-out; }
+        /* Cover Depan Buku */
+        .front { 
+            z-index: 2; 
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            flex-direction: column;
+        }
+
+        .front h2 {
+            font-size: 2em;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px white;
+        }
         
-        @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .front p {
+            font-size: 0.9em;
+            color: #ffb6c1;
+            margin-top: 10px;
+        }
+
+        /* Bagian Dalam/Belakang Album */
+        .back { 
+            transform: rotateY(180deg); z-index: 1; 
+            background: #111; 
+            padding: 15px;
+            border: 2px solid #ff69b4;
+        }
+        
+        #mainPhoto { 
+            width: 100%; height: 100%; object-fit: cover; 
+            border-radius: 8px; 
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            animation: popUp 0.6s ease-out; 
+        }
+        
+        @keyframes popUp { 
+            from { transform: scale(0.8) rotate(-5deg); opacity: 0; } 
+            to { transform: scale(1) rotate(0); opacity: 1; } 
+        }
+
+        .instruction {
+            margin-top: 25px; 
+            font-size: 0.85em; 
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
+    
     <div id="countdown">5</div>
     
     <div id="content">
-        <marquee class="big-running-text">HAPPY BIRTHDAY SAYANG ✨ I LOVE YOU! SEMOGA PANJANG UMUR & BAHAGIA SELALU 🤍</marquee>
+        <div id="greeting-text"></div>
         
         <div class="album-container" onclick="toggleBook()">
             <div class="book" id="book">
-                <div class="page front"><h2>📖 Buka Album</h2></div>
+                <div class="page front">
+                    <h2>📖 Buka</h2>
+                    <p>Tap untuk membuka kenangan</p>
+                </div>
                 <div class="page back" onclick="nextPhoto(event)">
-                    <img id="mainPhoto" src="foto1.jpg">
+                    <img id="mainPhoto" src="foto1.jpg" alt="Foto Kenangan">
                 </div>
             </div>
         </div>
-        <p style="margin-top: 15px; font-size: 0.9em; color: #ccc;">(Tap buku untuk buka/tutup, Tap foto untuk ganti slide)</p>
+        <p class="instruction">Tap sampul untuk buka/tutup<br>Tap foto untuk ganti *slide*</p>
     </div>
 
     <audio id="music" loop src="musik.mp3"></audio>
 
     <script>
-        // Hitung Mundur 5
+        // 1. Logika Hitung Mundur
         let count = 5;
+        const countdownEl = document.getElementById('countdown');
+        const contentEl = document.getElementById('content');
+        const textContainer = document.getElementById('greeting-text');
+        
         let timer = setInterval(() => {
             count--;
-            if (count > 0) document.getElementById('countdown').innerText = count;
-            else { clearInterval(timer); document.getElementById('countdown').style.display = 'none'; document.getElementById('content').style.display = 'block'; }
+            if (count > 0) {
+                countdownEl.innerText = count;
+            } else {
+                clearInterval(timer);
+                
+                // Efek memudar untuk angka hitung mundur
+                countdownEl.style.opacity = '0';
+                countdownEl.style.transform = 'scale(2)';
+                
+                setTimeout(() => {
+                    countdownEl.style.display = 'none';
+                    contentEl.style.display = 'block';
+                    triggerTextAnimation(); // Panggil animasi teks setelah konten muncul
+                }, 800);
+            }
         }, 1200);
 
+        // 2. Logika Animasi Teks Kata per Kata
+        const kalimat = "HAPPY BIRTHDAY SAYANG ✨ I LOVE YOU! SEMOGA PANJANG UMUR & BAHAGIA SELALU 🤍";
+        
+        function triggerTextAnimation() {
+            const kataKata = kalimat.split(" ");
+            textContainer.innerHTML = ""; // Bersihkan kontainer
+            
+            kataKata.forEach((kata, index) => {
+                let span = document.createElement("span");
+                span.innerHTML = kata;
+                span.classList.add("word");
+                // Jeda muncul tiap kata adalah 0.3 detik dikali urutannya
+                span.style.animationDelay = `${index * 0.3}s`; 
+                textContainer.appendChild(span);
+                
+                // Tambahkan spasi setelah kata kecuali kata terakhir
+                if(index < kataKata.length - 1) {
+                    textContainer.appendChild(document.createTextNode(" "));
+                }
+            });
+        }
+
+        // 3. Logika Buku & Audio
         let audio = document.getElementById('music');
         function toggleBook() {
             document.getElementById('book').classList.toggle('open');
-            audio.play();
+            // Pastikan audio diputar saat user berinteraksi
+            if (audio.paused) {
+                audio.play();
+            }
         }
 
-        // Slide Foto Satu Persatu
+        // 4. Logika Slide Foto
         let photos = ["foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg"];
         let index = 0;
         function nextPhoto(e) {
-            e.stopPropagation(); 
+            e.stopPropagation(); // Mencegah buku tertutup saat foto diklik
             index = (index + 1) % photos.length;
             let img = document.getElementById('mainPhoto');
+            
+            // Reset animasi
             img.style.animation = 'none';
-            // Trigger ulang animasi popUp
-            setTimeout(() => {
-                img.src = photos[index];
-                img.style.animation = 'popUp 0.6s ease-out';
-            }, 50);
+            // Paksa reflow agar animasi bisa di-trigger ulang
+            void img.offsetWidth; 
+            
+            // Ganti sumber foto dan jalankan animasi lagi
+            img.src = photos[index];
+            img.style.animation = 'popUp 0.6s ease-out';
         }
 
-        // Hujan Hati Lembut
-        const c = document.getElementById('matrix'), ctx = c.getContext('2d');
-        c.width = window.innerWidth; c.height = window.innerHeight;
-        let drops = Array(15).fill(0).map(() => Math.random() * c.height);
+        // 5. Efek Hujan Hati (Matrix Style)
+        const c = document.getElementById('matrix');
+        const ctx = c.getContext('2d');
+        
+        // Sesuaikan ukuran canvas saat diload dan di-resize
+        function resizeCanvas() {
+            c.width = window.innerWidth; 
+            c.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let drops = Array(Math.floor(window.innerWidth / 30)).fill(0).map(() => Math.random() * c.height);
+        
         function draw() { 
-            ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0, c.width, c.height); 
-            ctx.fillStyle = '#ff69b4'; ctx.font = "20px Arial";
-            drops.forEach((y, i) => { ctx.fillText("♥", i*(c.width/15), y); drops[i] = y > c.height ? 0 : y + 1.5; }); 
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; 
+            ctx.fillRect(0, 0, c.width, c.height); 
+            
+            ctx.fillStyle = '#ff69b4'; 
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            
+            drops.forEach((y, i) => { 
+                // Random warna hati sedikit agar lebih hidup
+                const colors = ['#ff69b4', '#ff1493', '#fff0f5'];
+                ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+                
+                ctx.fillText("♥", i * 30, y); 
+                
+                // Reset posisi hati ke atas atau biarkan turun
+                if (y > c.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                } else {
+                    drops[i] = y + 2; 
+                }
+            }); 
         }
         setInterval(draw, 50);
     </script>
